@@ -11,7 +11,8 @@
   (->> (str/split text #"[ \n]")
        (map #(str/split % #":"))
        flatten
-       (apply hash-map)))
+       (apply hash-map)
+       clojure.walk/keywordize-keys))
 
 ;byr (Birth Year)
 ;iyr (Issue Year)
@@ -23,7 +24,7 @@
 ;cid (Country ID)
 
 (def required-keys
-  '("byr" "iyr" "eyr" "hgt" "hcl" "ecl" "pid"))
+  '(:byr :iyr :eyr :hgt :hcl :ecl :pid))
 
 (defn valid-id1 [id]
   (= (count required-keys)
@@ -62,7 +63,7 @@
 ;hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
 (defn valid-hcl [v]
   (let [hcl (re-find #"^#[0-9a-f]+$" v)]
-    (and hcl (= 7 (count hcl)))))
+    (= 7 (count hcl))))
 
 ;ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
 (defn valid-ecl [v]
@@ -76,19 +77,19 @@
 ;cid (Country ID) - ignored, missing or not.
 
 (def key-validations
-  {"byr" valid-byr,
-   "iyr" valid-iyr,
-   "eyr" valid-eyr,
-   "hgt" valid-hgt,
-   "hcl" valid-hcl,
-   "ecl" valid-ecl,
-   "pid" valid-pid
-   }
-  )
+  {:byr valid-byr,
+   :iyr valid-iyr,
+   :eyr valid-eyr,
+   :hgt valid-hgt,
+   :hcl valid-hcl,
+   :ecl valid-ecl,
+   :pid valid-pid})
 
 (defn valid-id2 [id]
   (= (count key-validations)
-     (count (filter (fn [[k v]] ((key-validations k) v)) (dissoc id "cid")))))
+     (count
+       (filter (fn [[k v]] ((key-validations k) v))
+               (dissoc id :cid)))))
 
 (defn part2 []
   (->> input
