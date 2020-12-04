@@ -12,15 +12,13 @@
       (filter #(= % c))
       count))
 
-;;"2-6 c: fcpwjqhcgtffzlbj"
+;;"2-6 c: fcpwjqhcgtffzlbj" => (2 6 \c "fcpwjqhcgtffzlbj")
 
 (defn parse-entry [entry]
-  (let* [found (re-find #"(\d+)-(\d+) (\w): (\w+)" entry)
-         first-num (edn/read-string (nth found 1))
-         second-num (edn/read-string (nth found 2))
-         c (first (nth found 3))
-         password (nth found 4)]
-    (list first-num second-num c password)))
+  (map
+    (fn [f arg] (f arg))
+    (list edn/read-string edn/read-string first identity)
+    (rest (re-find #"(\d+)-(\d+) (\w): (\w+)" entry))))
 
 (defn count-all [pred]
   (->> input
