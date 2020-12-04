@@ -38,17 +38,17 @@
 
 ;byr (Birth Year) - four digits; at least 1920 and at most 2002.
 (defn valid-byr [v]
-  (let [yr (edn/read-string (re-find #"^\d\d\d\d$" v))]
+  (let [yr (edn/read-string (re-find #"^\d{4}$" v))]
     (and yr (>= yr 1920) (<= yr 2002))))
 
 ;iyr (Issue Year) - four digits; at least 2010 and at most 2020.
 (defn valid-iyr [v]
-  (let [yr (edn/read-string (re-find #"^\d\d\d\d$" v))]
+  (let [yr (edn/read-string (re-find #"^\d{4}$" v))]
     (and yr (>= yr 2010) (<= yr 2020))))
 
 ;eyr (Expiration Year) - four digits; at least 2020 and at most 2030.
 (defn valid-eyr [v]
-  (let [yr (edn/read-string (re-find #"^\d\d\d\d$" v))]
+  (let [yr (edn/read-string (re-find #"^\d{4}$" v))]
     (and yr (>= yr 2020) (<= yr 2030))))
 
 ;hgt (Height) - a number followed by either cm or in:
@@ -62,8 +62,7 @@
 
 ;hcl (Hair Color) - a # followed by exactly six characters 0-9 or a-f.
 (defn valid-hcl [v]
-  (let [hcl (re-find #"^#[0-9a-f]+$" v)]
-    (= 7 (count hcl))))
+  (re-find #"^#[0-9a-f]{6}$" v))
 
 ;ecl (Eye Color) - exactly one of: amb blu brn gry grn hzl oth.
 (defn valid-ecl [v]
@@ -71,8 +70,7 @@
 
 ;pid (Passport ID) - a nine-digit number, including leading zeroes.
 (defn valid-pid [v]
-  (let [pid (re-find #"^\d+$" v)]
-    (= 9 (count pid))))
+  (re-find #"^\d{9}$" v))
 
 ;cid (Country ID) - ignored, missing or not.
 
