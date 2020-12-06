@@ -15,8 +15,7 @@
 ;;"2-6 c: fcpwjqhcgtffzlbj" => (2 6 \c "fcpwjqhcgtffzlbj")
 
 (defn parse-entry [entry]
-  (map
-    (fn [f arg] (f arg))
+  (map (fn [f arg] (f arg))
     (list edn/read-string edn/read-string first identity)
     (rest (re-find #"(\d+)-(\d+) (\w): (\w+)" entry))))
 

@@ -1,11 +1,10 @@
 (ns day3
-  (:require [clojure.core.reducers :as r])
-  )
+  (:require [clojure.string :as str]))
 
 (def input
   (-> "src/day3-input.txt"
       slurp
-      clojure.string/split-lines))
+      str/split-lines))
 
 (def num-rows (count input))
 (def num-cols (count (first input)))
@@ -23,8 +22,7 @@
   (count-trees 3 1))
 
 (defn part2 []
-  (r/fold
-    *
+  (reduce *
     (map (partial apply count-trees)
          '((1 1)
            (3 1)
