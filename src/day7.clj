@@ -32,8 +32,8 @@
 ; => {"dull-aqua" {"dark-fuchsia" 4, "shiny-purple" 1}}
 (defn parse-bag [entry]
   "from entry, create a bag. a bag is map of a bag name to a map of inner bag names to the inner bag count"
-  (let* [outer (str/split entry #"contain")
-         inner (str/split (nth outer 1) #",")]
+  (let [outer (str/split entry #"contain")
+        inner (str/split (nth outer 1) #",")]
     {(str/join "-" (take 2 (str/split (nth outer 0) #" ")))
      (->> inner
           (map #(str/split % #" "))

@@ -23,6 +23,9 @@
   (let [split (str/split line #" ")]
     [(keyword (first split)) (edn/read-string (last split))]))
 
+(def get-op first)
+(def get-arg last)
+
 (defn make-program [input]
   (vec (map parse-inst input)))
 
@@ -34,11 +37,13 @@
       (seen-pcs pc) [:inf acc]
       (= pc (count program)) [:end acc]
       :else
-      (let [inst (nth program pc)]
-        (case (first inst)
-          :nop (recur acc (inc pc) (conj seen-pcs pc))
-          :acc (recur (+ acc (last inst)) (inc pc) (conj seen-pcs pc))
-          :jmp (recur acc (+ pc (last inst)) (conj seen-pcs pc)))))))
+      (let [inst (nth program pc)
+            op (get-op inst)
+            arg (get-arg inst)]
+        (recur
+          (if (= op :acc) (+ acc arg) acc)
+          (if (= op :jmp) (+ pc arg) (inc pc))
+          (conj seen-pcs pc))))))
 
 (defn part1 []
   (last (run-program (make-program input))))
@@ -46,12 +51,12 @@
 (defn part2 []
   (let [program (make-program input)]
     (->> (range (count program))
-         (filter (fn [pc] (#{:nop :jmp} (first (nth program pc)))))
+         (filter (fn [pc] (#{:nop :jmp} (get-op (nth program pc)))))
          (map (fn [pc]
                 (let [inst (nth program pc)]
-                  (assoc program pc [(if (= :nop (first inst)) :jmp :nop) (last inst)]))))
+                  (assoc program pc [(if (= :nop (get-op inst)) :jmp :nop) (get-arg inst)]))))
          (map run-program)
-         (filter (fn [[op _val]] (= op :end)))
+         (filter (fn [[op _arg]] (= op :end)))
          first
          last)))
 

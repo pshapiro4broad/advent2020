@@ -19,9 +19,9 @@
   (apply max (map to-id input)))
 
 (defn part2 []
-  (let* [ids (map to-id input)
-         front (apply min ids)
-         back (apply max ids)]
+  (let [ids (map to-id input)
+        front (apply min ids)
+        back (apply max ids)]
     (first (set/difference (set (range front back)) (set ids)))))
 
 (println "part 1: " (part1))
