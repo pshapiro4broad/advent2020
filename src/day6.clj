@@ -28,5 +28,5 @@
        (map group-total)
        (reduce +)))
 
-(println "part 1: " (part1))
-(println "part 2: " (part2))
+;(println "part 1: " (part1))
+;(println "part 2: " (part2))

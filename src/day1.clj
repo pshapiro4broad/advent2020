@@ -20,5 +20,5 @@
 (defn part2 []
   (reduce * (first-2020 3)))
 
-(println "part 1: " (part1))
-(println "part 2: " (part2))
+;(println "part 1: " (part1))
+;(println "part 2: " (part2))

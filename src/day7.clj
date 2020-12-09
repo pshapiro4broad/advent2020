@@ -30,8 +30,9 @@
 ; "faded blue bags contain no other bags."
 ; "dull aqua bags contain 4 dark fuchsia bags, 1 shiny purple bag."
 ; => {"dull-aqua" {"dark-fuchsia" 4, "shiny-purple" 1}}
-(defn parse-bag [entry]
+(defn parse-bag
   "from entry, create a bag. a bag is map of a bag name to a map of inner bag names to the inner bag count"
+  [entry]
   (let [outer (str/split entry #"contain")
         inner (str/split (nth outer 1) #",")]
     {(str/join "-" (take 2 (str/split (nth outer 0) #" ")))
@@ -40,8 +41,7 @@
           (map #(if (= (nth % 1) "no")
                   {}
                   {(str/join "-" (subvec % 2 4))
-                   (edn/read-string (nth % 1))
-                   }))
+                   (edn/read-string (nth % 1))}))
           (reduce merge))}))
 
 (defn bag-contains? [bags bag-type bag]
@@ -64,17 +64,14 @@
 
 (defn deep-bag-count [bags bag]
   (->> (bags bag)
-       (map (fn [[k v]] (* v (deep-bag-count bags k))))
-       (reduce +)
-       ; add one to count the current bag
-       inc))
+       (map (fn [[k v]] (+ v (* v (deep-bag-count bags k)))))
+       (reduce +)))
 
 (defn part2 []
   (let [bags (->> input
                   (map parse-bag)
                   (reduce merge))]
-    ; dec to remove the outermost bag
-    (dec (deep-bag-count bags "shiny-gold"))))
+    (deep-bag-count bags "shiny-gold")))
 
-(println "part 1: " (part1))
-(println "part 2: " (part2))
+;(println "part 1: " (part1))
+;(println "part 2: " (part2))

@@ -22,7 +22,9 @@
   (let [ids (map to-id input)
         front (apply min ids)
         back (apply max ids)]
-    (first (set/difference (set (range front back)) (set ids)))))
+    (->> (set ids)
+         (set/difference (set (range front back)))
+         first)))
 
-(println "part 1: " (part1))
-(println "part 2: " (part2))
+;(println "part 1: " (part1))
+;(println "part 2: " (part2))

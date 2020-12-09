@@ -16,7 +16,7 @@
 
 (defn parse-entry [entry]
   (map (fn [f arg] (f arg))
-    (list edn/read-string edn/read-string first identity)
+    [edn/read-string edn/read-string first identity]
     (rest (re-find #"(\d+)-(\d+) (\w): (\w+)" entry))))
 
 (defn count-all [pred]
@@ -39,5 +39,5 @@
 (defn part2 []
   (count-all is-valid2))
 
-(println "part 1: " (part1))
-(println "part 2: " (part2))
+;(println "part 1: " (part1))
+;(println "part 2: " (part2))

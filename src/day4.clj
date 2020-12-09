@@ -1,6 +1,7 @@
 (ns day4
   (:require [clojure.edn :as edn]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.walk :as walk]))
 (def input
   (-> "src/day4-input.txt"
       slurp
@@ -11,7 +12,7 @@
        (map #(str/split % #":"))
        flatten
        (apply hash-map)
-       clojure.walk/keywordize-keys))
+       walk/keywordize-keys))
 
 ;byr (Birth Year)
 ;iyr (Issue Year)
@@ -68,9 +69,9 @@
 
 (defn valid-id2 [id]
   (= (count key-validations)
-     (count
-       (filter (fn [[k v]] ((key-validations k) v))
-               (dissoc id :cid)))))
+     (->> (dissoc id :cid)
+          (filter (fn [[k v]] ((key-validations k) v)))
+          count)))
 
 (defn part2 []
   (->> input
@@ -78,5 +79,5 @@
        (filter valid-id2)
        count))
 
-(println "part 1: " (part1))
-(println "part 2: " (part2))
+;(println "part 1: " (part1))
+;(println "part 2: " (part2))
