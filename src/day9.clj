@@ -25,17 +25,18 @@
       (range preamble (count data))
       (filter #(not (valid (subvec data (- % preamble) %) (nth data %))))
       first
-      (#(nth data %)))))
+      (nth data))))
 
 (defn part2 []
   (let [invalid (part1)
         data (vec input)]
-    (first
+    (->>
       (for [length (range 2 (count data))
-            index (range 0 (- (count data) length))
-            :let [test-vec (subvec data index (+ index length))]
-            :when (= invalid (reduce + test-vec))]
-        (+ (reduce min test-vec) (reduce max test-vec))))))
+            index (range 0 (- (count data) length))]
+        (subvec data index (+ index length)))
+      (filter #(= invalid (reduce + %)))
+      first
+      (#(+ (reduce min %) (reduce max %))))))
 
 ;(println "part 1: " (part1))
 ;(println "part 2: " (part2))
