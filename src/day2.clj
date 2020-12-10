@@ -1,6 +1,5 @@
 (ns day2
-  (:require [clojure.edn :as edn]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]))
 
 (def input
   (-> "src/day2-input.txt"
@@ -16,7 +15,7 @@
 
 (defn parse-entry [entry]
   (map (fn [f arg] (f arg))
-    [edn/read-string edn/read-string first identity]
+    [read-string read-string first identity]
     (rest (re-find #"(\d+)-(\d+) (\w): (\w+)" entry))))
 
 (defn count-all [pred]
@@ -39,5 +38,6 @@
 (defn part2 []
   (count-all is-valid2))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2)))
