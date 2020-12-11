@@ -8,7 +8,8 @@
          'day7
          'day8
          'day9
-         'day10)
+         'day10
+         'day11)
 
 (defn run []
   (->> (range 1 10)
