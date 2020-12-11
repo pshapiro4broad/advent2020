@@ -21,6 +21,9 @@
 (defn occupied? [seats [row col]]
   (= occupied (get-seat seats row col)))
 
+(defn num-rows [seats] (count seats))
+(defn num-cols [seats] (count (first seats)))
+
 (def adjacent
   (for [x [-1 0 1]
         y [-1 0 1]
@@ -42,8 +45,8 @@
       :else current)))
 
 (defn next-round [seats count-occupied max-occupied]
-  (->> (for [row (range (count seats))
-             col (range (count (first seats)))]
+  (->> (for [row (range (num-rows seats))
+             col (range (num-cols seats))]
          (seat-next seats row col count-occupied max-occupied))
        (partition (count (first seats)))
        ;; for speed, make the next round a vector of vectors
@@ -68,14 +71,14 @@
   (loop [row (+ delta-row row)
          col (+ delta-col col)]
     (if (or (= row -1) (= col -1)
-            (= row (count seats)) (= col (count (first seats)))
+            (= row (num-rows seats)) (= col (num-cols seats))
             (not= (get-seat seats row col) vacant))
       (= (get-seat seats row col) occupied)
       (recur (+ delta-row row) (+ delta-col col)))))
 
 (defn count-occupied2 [seats row col]
   (->> adjacent
-       (map (partial find-occupied seats row col))
+       (map #(find-occupied seats row col %))
        (filter true?)
        count))
 

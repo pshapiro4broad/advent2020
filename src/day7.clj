@@ -50,7 +50,7 @@
 (defn deep-bag-contains? [bags bag-type bag]
   (or (bag-contains? bags bag-type bag)
       (->> (keys (bags bag))
-           (map (partial deep-bag-contains? bags bag-type))
+           (map #(deep-bag-contains? bags bag-type %))
            (filter some?)
            first)))
 
@@ -59,7 +59,7 @@
                   (map parse-bag)
                   (reduce merge))]
     (->> (keys bags)
-         (filter (partial deep-bag-contains? bags "shiny-gold"))
+         (filter #(deep-bag-contains? bags "shiny-gold" %))
          count)))
 
 (defn deep-bag-count [bags bag]
@@ -73,5 +73,5 @@
                   (reduce merge))]
     (deep-bag-count bags "shiny-gold")))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+(println "part 1: " (part1))
+(println "part 2: " (part2))
