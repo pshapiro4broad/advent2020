@@ -12,5 +12,6 @@
 (defn part2 []
   )
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2)))
