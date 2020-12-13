@@ -1,5 +1,6 @@
 (ns day12
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.core.matrix.operators :refer :all]))
 
 (def input
   (-> "src/day12-input.txt"
@@ -13,22 +14,14 @@
      (Math/abs ^int (- y1 y2))))
 
 (def dir->delta
-  {:N [-1 0]
-   :S [1 0]
-   :E [0 1]
-   :W [0 -1]})
+  {:N [-1 0] :S [1 0] :E [0 1] :W [0 -1]})
 
 (defn turn->dir [turn size facing]
-  (case turn
-    :L (case size
-         90 (case facing :E :N, :N :W, :W :S, :S :E)
-         180 (case facing :E :W, :N :S, :W :E, :S :N)
-         270 (case facing :E :S, :N :E, :W :N, :S :W))
-    :R (case size
-         90 (case facing :E :S, :N :E, :W :N, :S :W)
-         180 (case facing :E :W, :N :S, :W :E, :S :N)
-         270 (case facing :E :N, :N :W, :W :S, :S :E))
-    nil))
+  (let [size (if (= turn :L) size (- 360 size))]
+    (case size
+      90 (case facing :E :N, :N :W, :W :S, :S :E)
+      180 (case facing :E :W, :N :S, :W :E, :S :N)
+      270 (case facing :E :S, :N :E, :W :N, :S :W))))
 
 (defn decode [inst]
   [(keyword (subs inst 0 1))
@@ -37,33 +30,22 @@
 (defn part1 []
   (loop [input input
          facing :E
-         pos [0 0]]
+         ship [0 0]]
     (if (empty? input)
-      (compute-distance [0 0] pos)
+      (compute-distance [0 0] ship)
       (let [inst (decode (first input))
             dir (first inst)
-            size (last inst)
-            turn (turn->dir dir size facing)
-            ]
-        (if turn
-          (recur (next input) turn pos)
-          (recur (next input) facing (mapv + pos (mapv #(* % size) (dir->delta (if (dir->delta dir) dir facing)))))
-          )
-        )
-      )
-    )
-  )
+            size (last inst)]
+        (case dir
+          (:L :R) (recur (next input) (turn->dir dir size facing) ship)
+          (recur (next input) facing (+ ship (* size (dir->delta dir (dir->delta facing))))))))))
 
 (defn rotate-by [turn size [x y]]
-  (case turn
-    :L (case size
-         90 [(* -1 y) x]
-         180 [(* -1 x) (* -1 y)]
-         270 [y (* -1 x)])
-    :R (case size
-         90 [y (* -1 x)]
-         180 [(* -1 x) (* -1 y)]
-         270 [(* -1 y) x])))
+  (let [size (if (= turn :L) size (- 360 size))]
+    (case size
+      90 [(* -1 y) x]
+      180 [(* -1 x) (* -1 y)]
+      270 [y (* -1 x)])))
 
 (defn part2 []
   (loop [input input
@@ -73,19 +55,13 @@
       (compute-distance [0 0] ship)
       (let [inst (decode (first input))
             dir (first inst)
-            size (last inst)
-            ]
+            size (last inst)]
         (case dir
           (:L :R) (recur (next input) ship (rotate-by dir size waypoint))
-          :F (recur (next input) (map + ship (mapv #(* % size) waypoint)) waypoint)
-          (recur (next input) ship (map + waypoint (mapv #(* % size) (dir->delta dir))))
-          )
-        )
-      )
-    )
-  )
+          :F (recur (next input) (+ ship (* size waypoint)) waypoint)
+          (recur (next input) ship (+ waypoint (* size (dir->delta dir)))))))))
 
 (comment
   (println "part 1: " (part1))
   (println "part 2: " (part2))
-)
+  )
