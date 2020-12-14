@@ -16,12 +16,11 @@
 (def dir->delta
   {:N [-1 0] :S [1 0] :E [0 1] :W [0 -1]})
 
-(defn turn->dir [turn size facing]
-  (let [size (if (= turn :L) size (- 360 size))]
-    (case size
-      90 (case facing :E :N, :N :W, :W :S, :S :E)
-      180 (case facing :E :W, :N :S, :W :E, :S :N)
-      270 (case facing :E :S, :N :E, :W :N, :S :W))))
+(defn turn->dir [turn angle facing]
+  (case (if (= turn :L) angle (- 360 angle))
+    90 (case facing :E :N, :N :W, :W :S, :S :E)
+    180 (case facing :E :W, :N :S, :W :E, :S :N)
+    270 (case facing :E :S, :N :E, :W :N, :S :W)))
 
 (defn decode [inst]
   [(keyword (subs inst 0 1))
@@ -40,12 +39,11 @@
           (:L :R) (recur (next input) (turn->dir dir size facing) ship)
           (recur (next input) facing (+ ship (* size (dir->delta dir (dir->delta facing))))))))))
 
-(defn rotate-by [turn size [x y]]
-  (let [size (if (= turn :L) size (- 360 size))]
-    (case size
-      90 [(* -1 y) x]
-      180 [(* -1 x) (* -1 y)]
-      270 [y (* -1 x)])))
+(defn rotate-by [turn angle [x y]]
+  (case (if (= turn :L) angle (- 360 angle))
+    90 [(* -1 y) x]
+    180 [(* -1 x) (* -1 y)]
+    270 [y (* -1 x)]))
 
 (defn part2 []
   (loop [input input

@@ -8,8 +8,8 @@
 
 (defn count-chars-in-string [c s]
   (->> (seq s)
-      (filter #(= % c))
-      count))
+       (filter #(= % c))
+       count))
 
 ;;"2-6 c: fcpwjqhcgtffzlbj" => (2 6 \c "fcpwjqhcgtffzlbj")
 

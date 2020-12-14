@@ -1,7 +1,7 @@
 (ns main
   (:require [clojure.java.io :as io]))
 
-(defn run []
+(defn -main [& _args]
   (->> (io/file "./src")
        file-seq
        (map #(re-find #"^day(\d+).clj$" (.getName %)))
@@ -13,5 +13,6 @@
                (require (symbol (str "day" %)))
                (println "day" %)
                (println "part 1:" ((eval (symbol (str "day" % "/part1")))))
-               (println "part 2:" ((eval (symbol (str "day" % "/part2"))))))))
+               (println "part 2:" ((eval (symbol (str "day" % "/part2")))))))
+       doall)
   )
