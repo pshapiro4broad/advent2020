@@ -57,8 +57,9 @@
   (initialize input
               (fn [memory address mask value]
                 (->> (apply-mem-mask mask address)
-                     (map (fn [x] {x value}))
-                     (reduce merge memory)))))
+                     (reduce (fn [memory address]
+                               (assoc memory address value))
+                             memory)))))
 
 (comment
   (println "part 1: " (part1))
