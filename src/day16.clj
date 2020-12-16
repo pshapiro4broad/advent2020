@@ -40,41 +40,37 @@
        flatten
        (filter #(not (->> (input :rules)
                           (map :rule)
-                          (some (fn [rule] (rule %)))
-                          )))
+                          (some (fn [rule] (rule %))))))
        (reduce +)))
 
 (defn part2 []
-  (let [valid-nearby
-        (->> (input :nearby)
-             (filter
-               #(->> % (every?
-                         (fn [val] (->> (input :rules)
-                                        (map :rule)
-                                        (some (fn [rule] (rule val)))))))))]
-    (let [ranked (->> valid-nearby
-                      (apply (partial map vector))
-                      (map (fn [vals]
-                             (->> (input :rules)
-                                  (filter #(every? (% :rule) vals))
-                                  (map :name)
-                                  )))
-                      (zipmap (range (count (input :rules))))
-                      (sort-by #(count (last %)))
-                      )
-          rule-map (loop [ranked ranked
-                          rule-map {}]
-                     (if ranked
-                       (let [name (->> (fnext (first ranked))
-                                       (filter #(not (some (fn [v] (= v %)) (vals rule-map))))
-                                       first)]
-                         (recur (next ranked) (assoc rule-map (ffirst ranked) name)))
-                       rule-map))]
-      (->> rule-map
-           (filter (fn [[_k v]] (= (str/index-of v "departure") 0)))
-           (map first)
-           (map #(nth (input :your) %))
-           (reduce *)))))
+  (let [valid-nearby (->> (input :nearby)
+                          (filter
+                            #(->> % (every?
+                                      (fn [val] (->> (input :rules)
+                                                     (map :rule)
+                                                     (some (fn [rule] (rule val)))))))))
+        ranked (->> valid-nearby
+                    (apply (partial map vector))
+                    (map (fn [vals]
+                           (->> (input :rules)
+                                (filter #(every? (% :rule) vals))
+                                (map :name))))
+                    (zipmap (range (count (input :rules))))
+                    (sort-by #(count (last %))))
+        rule-map (loop [ranked ranked
+                        rule-map {}]
+                   (if ranked
+                     (let [name (->> (fnext (first ranked))
+                                     (filter #(not (some (fn [v] (= v %)) (vals rule-map))))
+                                     first)]
+                       (recur (next ranked) (assoc rule-map (ffirst ranked) name)))
+                     rule-map))]
+    (->> rule-map
+         (filter (fn [[_k v]] (= (str/index-of v "departure") 0)))
+         (map first)
+         (map #(nth (input :your) %))
+         (reduce *))))
 
 (comment
   (println "part 1: " (part1))
