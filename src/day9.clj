@@ -23,7 +23,7 @@
         data (vec input)]
     (->>
       (range preamble (count data))
-      (filter #(not (valid (subvec data (- % preamble) %) (nth data %))))
+      (remove #(valid (subvec data (- % preamble) %) (nth data %)))
       first
       (nth data))))
 
@@ -38,5 +38,7 @@
       first
       (#(+ (reduce min %) (reduce max %))))))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2))
+  )

@@ -11,7 +11,7 @@
         lines (-> (last input)
                   (str/split #","))]
     (->> lines
-         (filter #(not= % "x"))
+         (remove #(= % "x"))
          (map read-string)
          (map (fn [x] [x (* x (inc (quot target x)))]))
          (sort-by last <)
@@ -60,7 +60,7 @@
                   (str/split #","))]
     (->> (range (count lines))
          (map (fn [x] [x (nth lines x)]))
-         (filter #(not= (last %) "x"))
+         (remove #(= (last %) "x"))
          (map (fn [[i bus]] (let [bus (read-string bus)]
                               [bus (- bus i)])))
          (#(chinese-remainder (map first %) (map last %))))))

@@ -16,9 +16,7 @@
 (def test-lines2 "class: 0-1 or 4-19\nrow: 0-5 or 8-19\nseat: 0-13 or 16-19\n\nyour ticket:\n11,12,13\n\nnearby tickets:\n3,9,18\n15,1,5\n5,14,9")
 
 (def input
-  (let [lines (->
-                ;test-lines2
-                "src/day16-input.txt"
+  (let [lines (-> "src/day16-input.txt"
                   slurp
                   (str/split #"\n\n"))]
     {:rules (->> (first lines)
@@ -36,20 +34,22 @@
                   (map #(map read-string %)))}))
 
 (defn part1 []
-  (->> (input :nearby)
-       flatten
-       (filter #(not (->> (input :rules)
-                          (map :rule)
-                          (some (fn [rule] (rule %))))))
-       (reduce +)))
+  (let [all-rules (->> (input :rules)
+                       (map :rule))]
+    (->> (input :nearby)
+        flatten
+        ; remove all values that follow at least one rule
+        (remove #(some (fn [rule] (rule %)) all-rules))
+        (reduce +))))
 
 (defn part2 []
-  (let [valid-nearby (->> (input :nearby)
+  (let [all-rules (->> (input :rules)
+                       (map :rule))
+        valid-nearby (->> (input :nearby)
+                          ; select the tickets that, for each value, have at least one valid rule.
+                          ; this could allow an invalid ticket if there are two values that are only valid for the same rule
                           (filter
-                            #(->> % (every?
-                                      (fn [val] (->> (input :rules)
-                                                     (map :rule)
-                                                     (some (fn [rule] (rule val)))))))))
+                            #(every? (fn [val] (some (fn [rule] (rule val)) all-rules)) %)))
         ranked (->> valid-nearby
                     (apply (partial map vector))
                     (map (fn [vals]
@@ -62,7 +62,7 @@
                         rule-map {}]
                    (if ranked
                      (let [name (->> (fnext (first ranked))
-                                     (filter #(not (some (fn [v] (= v %)) (vals rule-map))))
+                                     (remove #(some (fn [v] (= v %)) (vals rule-map)))
                                      first)]
                        (recur (next ranked) (assoc rule-map (ffirst ranked) name)))
                      rule-map))]
