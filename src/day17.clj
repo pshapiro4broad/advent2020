@@ -12,8 +12,8 @@
 (def occupied \#)
 
 (defn parse-input [input]
-  (for [x (range (count (first input)))
-        y (range (count input))
+  (for [x (range (count input))
+        y (range (count (first input)))
         :when (= occupied (nth (nth input x) y))]
     [x y]))
 
@@ -34,24 +34,32 @@
         w [-1 0 1]]
     [x y z w]))
 
-(defn all-neighbors [cubes]
+(defn possible-active [cubes]
   (->> (for [cube cubes
              near adjacent]
          (mapv + cube near))
-       (into #{})))
+       distinct))
+
+(defn active-neighbors [all-alive cell]
+  (count
+    (for [delta adjacent
+          :let [neighbor (mapv + cell delta)]
+          :when (get all-alive neighbor)]
+      neighbor)))
 
 (defn next-active [cubes cube]
   (let [active? (get cubes cube)
-        active-neighbors  (->> adjacent
-                               (map #(mapv + cube %))
-                               (filter #(get cubes %))
-                               count)]
+        active-neighbors (active-neighbors cubes cube)]
+    (->> adjacent
+         (map #(mapv + cube %))
+         (filter #(get cubes %))
+         count)
     (if active?
       (or (= active-neighbors 3) (= active-neighbors 4))    ; 3, 4 here because we're also our neighbor
       (= active-neighbors 3))))
 
 (defn next-cycle [cubes]
-  (->> (all-neighbors cubes)
+  (->> (possible-active cubes)
        (filter #(next-active cubes %))
        (into #{})))
 
