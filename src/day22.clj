@@ -57,8 +57,9 @@
                   p2 (pop p2)]
               (cond
                 (and (>= (count p1) c1) (>= (count p2) c2))
-                (if (= :p1 (second (play-game2 (->> p1 (take c1) make-queue)
-                                               (->> p2 (take c2) make-queue))))
+                (if (or (> (reduce max (take c1 p1)) (reduce max (take c2 p2)))
+                     (= :p1 (second (play-game2 (->> p1 (take c1) make-queue)
+                                                (->> p2 (take c2) make-queue)))))
                   (recur (-> p1 (conj c1) (conj c2)) p2 seen-hands)
                   (recur p1 (-> p2 (conj c2) (conj c1)) seen-hands))
                 (> c1 c2)
