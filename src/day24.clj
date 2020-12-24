@@ -33,34 +33,18 @@
   (count (load-tiles input)))
 
 ;; copied from day 17, more or less
-(def adjacent (vals dir->delta))
 
-(defn possible-active [tiles]
-  (-> (for [tile tiles
-            near adjacent]
-        (mapv + tile near))
-      distinct))
-
-(defn active-neighbors [all-alive tile]
-  (count
-    (for [delta adjacent
-          :let [neighbor (mapv + tile delta)]
-          :when (get all-alive neighbor)]
-      neighbor)))
-
-(defn next-active [tiles tile]
-  (let [active? (get tiles tile)
-        active-neighbors (active-neighbors tiles tile)]
-    (if active?
-      (or (= active-neighbors 1) (= active-neighbors 2))
-      (= active-neighbors 2))))
+(defn neighborhood [[x y]]
+  (for [[dx dy] (vals dir->delta)]
+    [(+ x dx) (+ y dy)]))
 
 (defn next-cycle [tiles]
-  (->> (possible-active tiles)
-       (filter #(next-active tiles %))
-       (into #{})))
+  (set (for [[tile count] (frequencies (mapcat neighborhood tiles))
+             :when (or (= count 2)
+                       (and (contains? tiles tile)
+                            (or (= count 1) (= count 2))))]
+         tile)))
 
-;; works, but is slow
 (defn part2 []
   (loop [cycles 100
          tiles (load-tiles input)]
