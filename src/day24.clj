@@ -32,8 +32,6 @@
 (defn part1 []
   (count (load-tiles input)))
 
-;; copied from day 17, more or less
-
 (defn neighborhood [[x y]]
   (for [[dx dy] (vals dir->delta)]
     [(+ x dx) (+ y dy)]))
