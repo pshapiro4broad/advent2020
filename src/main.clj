@@ -9,10 +9,16 @@
        (map last)
        (map read-string)
        sort
-       (map #(do
-               (require (symbol (str "day" %)))
-               (println "day" %)
-               (println "part 1:" ((eval (symbol (str "day" % "/part1")))))
-               (println "part 2:" ((eval (symbol (str "day" % "/part2")))))))
+       (map (fn [day]
+              (do
+                (require (symbol (str "day" day)))
+                (doall
+                  (for [part [1 2]]
+                    (do
+                      (-> (symbol (str "day" day "/part" part))
+                          (doto (print ": "))
+                          (#(time ((eval %)))))
+                      )))
+                )))
        doall)
-  )
+  "done")
