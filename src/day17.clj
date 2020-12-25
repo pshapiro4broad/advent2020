@@ -50,10 +50,6 @@
 (defn next-active [cubes cube]
   (let [active? (get cubes cube)
         active-neighbors (active-neighbors cubes cube)]
-    (->> adjacent
-         (map #(mapv + cube %))
-         (filter #(get cubes %))
-         count)
     (if active?
       (or (= active-neighbors 3) (= active-neighbors 4))    ; 3, 4 here because we're also our neighbor
       (= active-neighbors 3))))

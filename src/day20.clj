@@ -174,6 +174,7 @@
         image (->> positioned
                    (map (fn [[[x y] [_ tile]]] (tile-to-set tile (* x inside-size) (* y inside-size))))
                    (reduce set/union))
+        ;; monsters in all possible orientations
         monsters ((juxt identity flip2
                         #(rotate2 % 3) #(flip2 (rotate2 % 3))
                         #(rotate2 (rotate2 % 3) 20) #(flip2 (rotate2 (rotate2 % 3) 20))
