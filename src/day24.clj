@@ -44,11 +44,11 @@
          tile)))
 
 (defn part2 []
-  (loop [cycles 100
-         tiles (load-tiles input)]
-    (if (zero? cycles)
-      (count tiles)
-      (recur (dec cycles) (next-cycle tiles)))))
+  (->> (load-tiles input)
+       (iterate next-cycle)
+       (drop 100)
+       first
+       count))
 
 (comment
   (println "part 1: " (part1))
