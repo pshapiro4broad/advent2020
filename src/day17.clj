@@ -6,9 +6,6 @@
       slurp
       str/split-lines))
 
-(def test-input
-  '(".#." "..#" "###"))
-
 (def occupied \#)
 
 (defn parse-input [input]
@@ -27,53 +24,34 @@
        (map #(conj % 0 0))
        (into #{})))
 
-(def adjacent
-  (for [x [-1 0 1]
-        y [-1 0 1]
-        z [-1 0 1]
-        w [-1 0 1]]
-    [x y z w]))
+(defn neighborhood-3d [[x y z]]
+  (for [dx [-1 0 1] dy [-1 0 1] dz [-1 0 1]
+        :when (not= 0 dx dy dz)]
+    [(+ x dx) (+ y dy) (+ z dz)]))
 
-(defn possible-active [cubes]
-  (->> (for [cube cubes
-             near adjacent]
-         (mapv + cube near))
-       distinct))
-
-(defn active-neighbors [all-alive cell]
-  (count
-    (for [delta adjacent
-          :let [neighbor (mapv + cell delta)]
-          :when (get all-alive neighbor)]
-      neighbor)))
-
-(defn next-active [cubes cube]
-  (let [active? (get cubes cube)
-        active-neighbors (active-neighbors cubes cube)]
-    (if active?
-      (or (= active-neighbors 3) (= active-neighbors 4))    ; 3, 4 here because we're also our neighbor
-      (= active-neighbors 3))))
-
-(defn next-cycle [cubes]
-  (->> (possible-active cubes)
-       (filter #(next-active cubes %))
-       (into #{})))
-
-(defn run-conway [cycles cubes]
-  (loop [cycles cycles
-         cubes cubes]
-    (if (zero? cycles)
-      cubes
-      (recur (dec cycles) (next-cycle cubes)))))
+(defn next-cycle [get-neighbors cubes]
+  (set (for [[cube count] (frequencies (mapcat get-neighbors cubes))
+             :when (or (= count 3)
+                       (and (cubes cube) (= count 2)))]
+         cube)))
 
 (defn part1 []
   (->> (parse-input-3d input)
-       (run-conway 6)
+       (iterate (partial next-cycle neighborhood-3d))
+       (drop 6)
+       first
        count))
+
+(defn neighborhood-4d [[x y z w]]
+  (for [dx [-1 0 1] dy [-1 0 1] dz [-1 0 1] dw [-1 0 1]
+        :when (not= 0 dx dy dz dw)]
+    [(+ x dx) (+ y dy) (+ z dz) (+ w dw)]))
 
 (defn part2 []
   (->> (parse-input-4d input)
-       (run-conway 6)
+       (iterate (partial next-cycle neighborhood-4d))
+       (drop 6)
+       first
        count))
 
 (comment
