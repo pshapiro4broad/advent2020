@@ -30,8 +30,8 @@
                   (case dir
                     (:L :R) (update nav :facing #(turn->dir dir size %))
                     (update nav :ship #(matrix/add % (matrix/scale (dir->delta dir (dir->delta (nav :facing))) size))))))
-             {:ship [0 0] :facing :E}
-             input)
+              {:ship [0 0] :facing :E}
+              input)
       :ship
       (compute-distance [0 0]))
   )
