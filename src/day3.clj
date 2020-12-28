@@ -10,8 +10,7 @@
 (def num-cols (count (first input)))
 
 (defn tree-at? [row col]
-  (and (< row num-rows)
-       (= \# (nth (nth input row) (mod col num-cols)))))
+  (= \# (nth (nth input row nil) (mod col num-cols))))
 
 (defn count-trees [[right down]]
   (->> (range num-rows)
@@ -28,4 +27,5 @@
 
 (comment
   (println "part 1: " (part1))
-  (println "part 2: " (part2)))
+  (println "part 2: " (part2))
+  )

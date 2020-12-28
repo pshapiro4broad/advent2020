@@ -27,6 +27,9 @@
 (defn part2 []
   (play-game input 30000000))
 
+; part 1:  870
+; part 2:  9136
+
 (comment
   (println "part 1: " (part1))
   (println "part 2: " (part2))

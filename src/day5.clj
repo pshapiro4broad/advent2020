@@ -26,5 +26,10 @@
          (set/difference (set (range front back)))
          first)))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+; part 1:  930
+; part 2:  515
+
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2))
+  )

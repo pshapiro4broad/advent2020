@@ -9,11 +9,7 @@
       str/split-lines
       (->> (map edn/read-string))))
 
-(def test-input
-  '(35 20 15 25 47 40 62 55 65 95 102 117 150 182 127
-     219 299 277 309 576))
-
-(defn valid [vec value]
+(defn valid? [vec value]
   (->> (combo/combinations vec 2)
        (filter #(= value (reduce + %)))
        first))
@@ -23,7 +19,7 @@
         data (vec input)]
     (->>
       (range preamble (count data))
-      (remove #(valid (subvec data (- % preamble) %) (nth data %)))
+      (remove #(valid? (subvec data (- % preamble) %) (nth data %)))
       first
       (nth data))))
 
@@ -37,6 +33,9 @@
       (filter #(= invalid (reduce + %)))
       first
       (#(+ (reduce min %) (reduce max %))))))
+
+; part 1:  1639024365
+; part 2:  219202240
 
 (comment
   (println "part 1: " (part1))

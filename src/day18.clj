@@ -44,7 +44,7 @@
        (map reduce-exp2)
        (reduce +)))
 
-;(comment
+(comment
   (println "part 1: " (part1))
   (println "part 2: " (part2))
-  ;)
+  )

@@ -7,16 +7,14 @@
       str/split-lines))
 
 (defn count-chars-in-string [c s]
-  (->> (seq s)
-       (filter #(= % c))
-       count))
+  ((frequencies s) c 0))
 
 ;;"2-6 c: fcpwjqhcgtffzlbj" => (2 6 \c "fcpwjqhcgtffzlbj")
 
 (defn parse-entry [entry]
   (map (fn [f arg] (f arg))
-    [read-string read-string first identity]
-    (rest (re-find #"(\d+)-(\d+) (\w): (\w+)" entry))))
+       [read-string read-string first identity]
+       (rest (re-find #"(\d+)-(\d+) (\w): (\w+)" entry))))
 
 (defn count-all [pred]
   (->> input
@@ -40,4 +38,5 @@
 
 (comment
   (println "part 1: " (part1))
-  (println "part 2: " (part2)))
+  (println "part 2: " (part2))
+  )

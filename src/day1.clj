@@ -1,13 +1,12 @@
 (ns day1
   (:require [clojure.math.combinatorics :as combo]
-            [clojure.string :as str]
-            [clojure.edn :as edn]))
+            [clojure.string :as str]))
 
 (def input
   (->> "src/day1-input.txt"
        slurp
        str/split-lines
-       (map edn/read-string)))
+       (map read-string)))
 
 (defn first-2020 [size]
   (->> (combo/combinations input size)
@@ -20,5 +19,7 @@
 (defn part2 []
   (reduce * (first-2020 3)))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2))
+  )

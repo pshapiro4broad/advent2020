@@ -7,18 +7,6 @@
       slurp
       str/split-lines))
 
-(def test-input
-  '("nop +0"
-     "acc +1"
-     "jmp +4"
-     "acc +3"
-     "jmp -3"
-     "acc -99"
-     "acc +1"
-     "jmp -4"
-     "acc +6"
-     ))
-
 (defn parse-inst [line]
   (let [split (str/split line #" ")]
     [(keyword (first split)) (edn/read-string (last split))]))
@@ -60,5 +48,10 @@
          first
          last)))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+; part 1:  1489
+; part 2:  1539
+
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2))
+  )

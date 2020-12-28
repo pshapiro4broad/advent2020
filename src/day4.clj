@@ -1,7 +1,8 @@
 (ns day4
   (:require [clojure.edn :as edn]
             [clojure.string :as str]
-            [clojure.walk :as walk]))
+            [clojure.walk :as walk]
+            [clojure.set :as set]))
 (def input
   (-> "src/day4-input.txt"
       slurp
@@ -24,11 +25,10 @@
 ;cid (Country ID)
 
 (def required-keys
-  '(:byr :iyr :eyr :hgt :hcl :ecl :pid))
+  #{:byr :iyr :eyr :hgt :hcl :ecl :pid})
 
 (defn valid-id1 [id]
-  (= (count required-keys)
-     (count (select-keys id required-keys))))
+  (set/subset? required-keys (set (keys id))))
 
 (defn part1 []
   (->> input
@@ -52,8 +52,7 @@
 ;cid (Country ID) - ignored, missing or not.
 
 (def key-validations
-  {
-   ;byr (Birth Year) - four digits; at least 1920 and at most 2002.
+  {;byr (Birth Year) - four digits; at least 1920 and at most 2002.
    :byr #(valid-yr % 1920 2002),
    ;iyr (Issue Year) - four digits; at least 2010 and at most 2020.
    :iyr #(valid-yr % 2010 2020),
@@ -79,5 +78,10 @@
        (filter valid-id2)
        count))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+; part 1:  242
+; part 2:  186
+
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2))
+  )

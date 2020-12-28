@@ -27,7 +27,7 @@
                 [0 0]
                 (map dir->delta line))))
     #{}
-    (->> input (map parse-line))))
+    (map parse-line input)))
 
 (defn part1 []
   (count (load-tiles input)))

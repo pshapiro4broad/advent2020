@@ -10,7 +10,6 @@
 (defn part1 []
   (->> input
        (map #(str/replace % #"\n" ""))
-       (map seq)
        (map set)
        (map count)
        (reduce +)))
@@ -18,7 +17,6 @@
 (defn group-total [entry]
   (->> entry
        str/split-lines
-       (map seq)
        (map set)
        (reduce set/intersection)
        count))
@@ -28,5 +26,10 @@
        (map group-total)
        (reduce +)))
 
-;(println "part 1: " (part1))
-;(println "part 2: " (part2))
+; part 1:  6291
+; part 2:  3052
+
+(comment
+  (println "part 1: " (part1))
+  (println "part 2: " (part2))
+  )

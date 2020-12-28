@@ -7,10 +7,6 @@
       str/split-lines
       (->> (map read-string))))
 
-(def test-input '(16 10 15 5 1 11 7 19 6 12 4))
-
-(def test-input-2 '(28 33 18 42 31 14 46 20 48 47 24 23 49 45 19 38 39 11 1 32 25 35 8 17 7 9 4 2 34 10 3))
-
 (defn part1 []
   (let [c (sort (conj input 0 (+ 3 (reduce max input))))]
     (->> (range (dec (count c)))
@@ -32,6 +28,9 @@
                  (reduce +)
                  (max 1)))
           (inc index))))))
+
+; part 1:  1980
+; part 2:  4628074479616
 
 (comment
   (println "part 1: " (part1))
