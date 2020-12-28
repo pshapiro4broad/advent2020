@@ -1,13 +1,11 @@
 (ns day12
   (:require [clojure.string :as str]
-            [clojure.core.matrix.operators :refer :all]))
+            [clojure.core.matrix :as matrix]))
 
 (def input
   (-> "src/day12-input.txt"
       slurp
       str/split-lines))
-
-(def test-input '("F10" "N3" "F7" "R90" "F11"))
 
 (defn compute-distance [[x1 y1] [x2 y2]]
   (+ (Math/abs ^int (- x1 x2))
@@ -27,17 +25,16 @@
    (read-string (subs inst 1))])
 
 (defn part1 []
-  (loop [input input
-         facing :E
-         ship [0 0]]
-    (if (empty? input)
-      (compute-distance [0 0] ship)
-      (let [inst (decode (first input))
-            dir (first inst)
-            size (last inst)]
-        (case dir
-          (:L :R) (recur (next input) (turn->dir dir size facing) ship)
-          (recur (next input) facing (+ ship (* size (dir->delta dir (dir->delta facing))))))))))
+  (-> (reduce (fn [nav head]
+                (let [[dir size] (decode head)]
+                  (case dir
+                    (:L :R) (update nav :facing #(turn->dir dir size %))
+                    (update nav :ship #(matrix/add % (matrix/scale (dir->delta dir (dir->delta (nav :facing))) size))))))
+             {:ship [0 0] :facing :E}
+             input)
+      :ship
+      (compute-distance [0 0]))
+  )
 
 (defn rotate-by [turn angle [x y]]
   (case (if (= turn :L) angle (- 360 angle))
@@ -46,18 +43,19 @@
     270 [y (* -1 x)]))
 
 (defn part2 []
-  (loop [input input
-         ship [0 0]
-         waypoint [-1 10]]
-    (if (empty? input)
-      (compute-distance [0 0] ship)
-      (let [inst (decode (first input))
-            dir (first inst)
-            size (last inst)]
-        (case dir
-          (:L :R) (recur (next input) ship (rotate-by dir size waypoint))
-          :F (recur (next input) (+ ship (* size waypoint)) waypoint)
-          (recur (next input) ship (+ waypoint (* size (dir->delta dir)))))))))
+  (-> (reduce (fn [nav head]
+                (let [[dir size] (decode head)]
+                  (case dir
+                    (:L :R) (update nav :waypoint #(rotate-by dir size %))
+                    :F (update nav :ship #(matrix/add % (matrix/scale (nav :waypoint) size)))
+                    (update nav :waypoint #(matrix/add % (matrix/scale (dir->delta dir) size))))))
+              {:ship [0 0] :waypoint [-1 10]}
+              input)
+      :ship
+      (compute-distance [0 0])))
+
+;; part 1:  845
+;; part 2:  27016
 
 (comment
   (println "part 1: " (part1))
