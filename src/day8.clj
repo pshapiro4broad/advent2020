@@ -12,7 +12,7 @@
     [(keyword (first split)) (edn/read-string (last split))]))
 
 (def get-op first)
-(def get-arg last)
+(def get-acc last)
 
 (defn make-program [input]
   (vec (map parse-inst input)))
@@ -22,31 +22,29 @@
          pc 0
          seen-pcs #{}]
     (cond
-      (seen-pcs pc) [:inf acc]
+      (contains? seen-pcs pc) [:inf acc]
       (= pc (count program)) [:end acc]
       :else
-      (let [inst (nth program pc)
-            op (get-op inst)
-            arg (get-arg inst)]
+      (let [[op arg] (nth program pc)]
         (recur
           (if (= op :acc) (+ acc arg) acc)
           (if (= op :jmp) (+ pc arg) (inc pc))
           (conj seen-pcs pc))))))
 
 (defn part1 []
-  (last (run-program (make-program input))))
+  (get-acc (run-program (make-program input))))
 
 (defn part2 []
   (let [program (make-program input)]
     (->> (range (count program))
          (filter (fn [pc] (#{:nop :jmp} (get-op (nth program pc)))))
          (map (fn [pc]
-                (let [inst (nth program pc)]
-                  (assoc program pc [(if (= :nop (get-op inst)) :jmp :nop) (get-arg inst)]))))
+                (let [[op arg] (nth program pc)]
+                  (assoc program pc [(if (= :nop op) :jmp :nop) arg]))))
          (map run-program)
-         (filter (fn [[op _arg]] (= op :end)))
+         (filter (fn [[op _]] (= op :end)))
          first
-         last)))
+         get-acc)))
 
 ; part 1:  1489
 ; part 2:  1539
