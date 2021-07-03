@@ -156,15 +156,17 @@
        set))
 
 ; for debugging
-(defn draw [image h w]
-  (doall
-    (for [y (range h)]
-      (do
-        (apply print
-               (for [x (range w)]
-                 (if (image [x y]) \# \.)))
-        (println))))
-  nil)
+(comment
+  (defn draw [image h w]
+   (doall
+     (for [y (range h)]
+       (do
+         (apply print
+                (for [x (range w)]
+                  (if (image [x y]) \# \.)))
+         (println))))
+   nil)
+  )
 
 ;; 12x12 tiles
 (defn part2 []
@@ -181,11 +183,11 @@
                         #(rotate2 (rotate2 (rotate2 % 3) 20) 3) #(flip2 (rotate2 (rotate2 (rotate2 % 3) 20) 3))
                         ) monster)]
     (->> monsters
-         (map #(->> (for [x (range (* inside-size num-tiles))]
-                      (for [y (range (* inside-size num-tiles))
-                            :let [monster (translate % x y)]
-                            :when (set/subset? monster image)]
-                        monster))))
+         (map #(for [x (range (* inside-size num-tiles))]
+                 (for [y (range (* inside-size num-tiles))
+                       :let [monster (translate % x y)]
+                       :when (set/subset? monster image)]
+                   monster)))
          flatten
          (reduce set/union)
          (set/difference image)
